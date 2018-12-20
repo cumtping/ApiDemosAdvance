@@ -25,7 +25,30 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     buildToolsVersion '28.0.1'
+
+    sourceSets {
+        ApiDemosAdvance {
+            res.srcDirs = ['src/main/res']
+        }
+    }
+
+    flavorDimensions "current"
+
+    productFlavors {
+        ApiDemosAdvance {
+            applicationId "com.example.android.apis"
+        }
+    }
+    // TODO: Change build apk name.
+    //    applicationVariants.all { variant ->
+    //        variant.outputs.all { output ->
+    //            outputFileName = new File(
+    //                    productFlavors[0].name + "_" + buildType.name + "_v"
+    //                            + defaultConfig.versionName + ".apk", output.outputFile,)
+    //        }
+    //    }
 }
 
 dependencies {
@@ -35,4 +58,8 @@ dependencies {
     implementation 'com.android.support:support-v4:28.+'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
 }
