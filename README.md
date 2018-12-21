@@ -7,3 +7,7 @@ This project is based on Android P ApiDemos.
 Path in AOSP is development/samples/ApiDemos/
 # Feathers
 - An overflow button for every pages which leads to the source code of the current page;
+# Get the apk and install to your phone.
+You can get the apk files in the release folder of this repo.  
+  
+你可以在本仓库的release目录下下载apk文件并安装到手机。
