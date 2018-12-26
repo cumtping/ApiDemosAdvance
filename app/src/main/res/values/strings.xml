@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="activity_sample_code">API Demos</string>
 
     <!-- =============================== -->
@@ -1683,4 +1683,6 @@
     <string name="process_text_no_text_process_intent_received">Try selecting some text in another app and find this app\'s name in the list of options for its selection menu.</string>
     <string name="process_text_send_title">Select text to process</string>
     <string name="process_text_send_description">Select a piece of text from this box to trigger the text selection action mode. In there, you will find \"ApiDemos\". That is because this app declares it can handle text processing intents. Try selecting that action to send the selected text to that activity and retrieve processed text back.</string>
+    <string name="message_overlay_permission_required" translatable="false" tools:ignore="ExtraTranslation">Overlay permission is
+        needed!</string>
 </resources>
