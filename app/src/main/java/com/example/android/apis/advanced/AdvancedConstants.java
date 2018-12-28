@@ -14,4 +14,12 @@ public interface AdvancedConstants {
      * Float view margin.
      */
     float FLOAT_VIEW_MARGIN = 0.02f;
+    /**
+     * Asset path for code zip file.
+     */
+    String CODE_ASSET_PATH = "code-p.zip";
+    /**
+     * Sdcard path for code.
+     */
+    String CODE_SDCARD_PATH = Environment.getExternalStorageDirectory().getPath() + "/ApiDemos/";
 }
