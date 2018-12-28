@@ -81,10 +81,15 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
         // This setting is sticky across reboots, but that doesn't matter, because this will
         // be called after boot if there is a widget instance for this provider.
         PackageManager pm = context.getPackageManager();
-        pm.setComponentEnabledSetting(
-                new ComponentName("com.example.android.apis", ".appwidget.ExampleBroadcastReceiver"),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
+        try {
+            pm.setComponentEnabledSetting(
+                    new ComponentName("com.example.android.apis", ".appwidget.ExampleBroadcastReceiver"),
+
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        } catch (IllegalArgumentException exception) {
+            Log.e(TAG, "onEnabled", exception);
+        }
     }
 
     @Override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <dimen name="advanced_float_view_size" tools:ignore="MissingDefaultResource">60dp</dimen>
+    <dimen name="advanced_float_view_radius" tools:ignore="MissingDefaultResource">30dp</dimen>
+</resources>

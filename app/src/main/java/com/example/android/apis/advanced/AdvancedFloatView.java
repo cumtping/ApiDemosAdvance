@@ -2,22 +2,44 @@ package com.example.android.apis.advanced;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.AppCompatImageView;
 import android.widget.Toast;
 
-import com.example.android.apis.ApiDemos;
 import com.example.android.apis.ApiDemosApplication;
 import com.example.android.apis.R;
 
 /**
  * Advanced float view.
+ *
+ * <p>
+ * Features :
+ * (1) Show as an application overlay view;
+ * (2) Use BitmapShader to create circle image;
+ * Notice: I want to extend the {@link CardView} for circle image. But the image is white and I
+ * don't know why. So I just use BitmapShader for this feature.
+ * (3) Move with finger touch;
+ * </p>
+ *
+ * <p>
+ * Future features:
+ * (1) Animation leading user to click;
+ * </p>
  */
 public class AdvancedFloatView extends AppCompatImageView {
     /**
@@ -33,21 +55,21 @@ public class AdvancedFloatView extends AppCompatImageView {
      */
     private static AdvancedFloatView sInstance;
     /**
-     * Touch start x.
+     * Touch start mTouchStartWindowX.
      */
     private float mTouchStartX;
     /**
-     * Touch start y.
+     * Touch start mTouchStartWindowY.
      */
     private float mTouchStartY;
     /**
-     * x value.
+     * mTouchStartWindowX value.
      */
-    private float x;
+    private float mTouchStartWindowX;
     /**
-     * y value.
+     * mTouchStartWindowY value.
      */
-    private float y;
+    private float mTouchStartWindowY;
     /**
      * Is move.
      */
@@ -60,16 +82,40 @@ public class AdvancedFloatView extends AppCompatImageView {
     /**
      * Window manager layout parameter.
      */
-    private WindowManager.LayoutParams mWindowParamater = ((ApiDemosApplication) getContext()
-            .getApplicationContext()).getWindowParams();
+    private WindowManager.LayoutParams mWindowParamater;
+    /**
+     * Bitmap shader.
+     */
+    private BitmapShader mBitmapShader;
+    /**
+     * Bitmap paint.
+     */
+    private Paint mBitmapPaint = new Paint();
+    /**
+     * Circle mTouchStartWindowX.
+     */
+    private int mCircleX;
+    /**
+     * Circle mTouchStartWindowY.
+     */
+    private int mCircleY;
+    /**
+     * Circle radius.
+     */
+    private int mRadius;
+    /**
+     * Shader matrix.
+     */
+    private final Matrix mShaderMatrix = new Matrix();
 
     /**
      * Constructor.
      *
      * @param context Context.
      */
-    private AdvancedFloatView(Context context) {
+    public AdvancedFloatView(@NonNull Context context) {
         super(context);
+        init();
     }
 
     /**
@@ -83,9 +129,8 @@ public class AdvancedFloatView extends AppCompatImageView {
         if (sInstance != null) {
             AdvancedFloatView.removeView(context);
         }
-        AdvancedFloatView advancedFloatView = new AdvancedFloatView(context.getApplicationContext
-                ());
-        advancedFloatView.setBackgroundResource(R.drawable.ic_code);
+        AdvancedFloatView advancedFloatView = new AdvancedFloatView(context);
+        advancedFloatView.setImageResource(R.drawable.ic_code);
         WindowManager wm = (WindowManager) context.getApplicationContext().getSystemService
                 (Context.WINDOW_SERVICE);
         WindowManager.LayoutParams param = ((ApiDemosApplication) context.getApplicationContext()
@@ -98,10 +143,19 @@ public class AdvancedFloatView extends AppCompatImageView {
         param.flags = param.flags | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
 
         param.alpha = 1.0f;
+        param.horizontalMargin = AdvancedConstants.FLOAT_VIEW_MARGIN;
+        param.verticalMargin = AdvancedConstants.FLOAT_VIEW_MARGIN;
 
-        param.gravity = Gravity.LEFT | Gravity.TOP;
-        param.width = 60;
-        param.height = 60;
+        // Notice : Do not set param gravity, otherwise there will be shrink when moving the view.
+        // param.gravity = Gravity.RIGHT | Gravity.TOP;
+        // Notice end.
+
+        int viewSize = context.getResources().getDimensionPixelOffset(R.dimen
+                .advanced_float_view_size);
+        param.width = viewSize;
+        param.height = viewSize;
+
+        advancedFloatView.mWindowParamater = param;
 
         wm.addView(advancedFloatView, param);
         sInstance = advancedFloatView;
@@ -111,18 +165,21 @@ public class AdvancedFloatView extends AppCompatImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        x = event.getRawX();
-        y = event.getRawY() - 25;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mIsMove = false;
-                mTouchStartX = event.getX();
-                mTouchStartY = event.getY();
+                // Notice : Should use getRawX/Y. If getX/Y is used, there will be shrink when
+                // moving the view.
+                mTouchStartX = event.getRawX();
+                mTouchStartY = event.getRawY();
+                // Record the window parameter.
+                mTouchStartWindowX = mWindowParamater.x;
+                mTouchStartWindowY = mWindowParamater.y;
 
                 break;
             case MotionEvent.ACTION_MOVE:
                 mIsMove = true;
-                updateViewPosition();
+                updateViewPosition(event.getRawX() - mTouchStartX, event.getRawY() - mTouchStartY);
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -140,11 +197,16 @@ public class AdvancedFloatView extends AppCompatImageView {
 
     /**
      * Update view position.
+     *
+     * @param deltaX Move distance in screen x.
+     * @param deltaY Move distance in screen y.
      */
-    private void updateViewPosition() {
-        mWindowParamater.x = (int) (x - mTouchStartX);
-        mWindowParamater.y = (int) (y - mTouchStartY);
-        mWindowManager.updateViewLayout(this, mWindowParamater);
+    private void updateViewPosition(float deltaX, float deltaY) {
+        if (null != mWindowParamater) {
+            mWindowParamater.x = (int) (mTouchStartWindowX + deltaX);
+            mWindowParamater.y = (int) (mTouchStartWindowY + deltaY);
+            mWindowManager.updateViewLayout(this, mWindowParamater);
+        }
     }
 
     /**
@@ -174,8 +236,8 @@ public class AdvancedFloatView extends AppCompatImageView {
     public static void checkToShowFloatView(Context context, String currentActivity) {
         if (currentActivity != null && context != null) {
             boolean isApiDemosPage = currentActivity.startsWith(context.getPackageName());
-            boolean isApiDemosListPage = currentActivity.equals(ApiDemos.class.getName());
-            // TODO: Check whether is advance page.
+            boolean isApiDemosListPage = false;//currentActivity.equals(ApiDemos.class.getName());
+            // TODO: Check whether is advanced page.
             boolean isAdvancedPage = false;
 
             if (isApiDemosPage && !isApiDemosListPage && !isAdvancedPage) {
@@ -194,5 +256,67 @@ public class AdvancedFloatView extends AppCompatImageView {
                 }
             }
         }
+    }
+
+    @Override
+    public void setImageResource(int resId) {
+        super.setImageResource(resId);
+        setupBitmapShader();
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        setupBitmapShader();
+    }
+
+    private void setupBitmapShader() {
+        if (mBitmapPaint == null) {
+            return;
+        }
+        mShaderMatrix.set(null);
+        Bitmap bitmap = AdvancedUtils.drawableToBitmap(getDrawable());
+        if (bitmap == null) {
+            invalidate();
+            return;
+        }
+        mBitmapShader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        mBitmapPaint.setShader(mBitmapShader);
+
+        float scale = Math.max(getWidth() * 1f / bitmap.getWidth(), getHeight() * 1f / bitmap
+                .getHeight());
+        float dx = (getWidth() - bitmap.getWidth() * scale) / 2;
+        float dy = (getHeight() - bitmap.getHeight() * scale) / 2;
+        mShaderMatrix.setScale(scale, scale);
+        mShaderMatrix.postTranslate(dx, dy);
+        mBitmapShader.setLocalMatrix(mShaderMatrix);
+        invalidate();
+    }
+
+    /**
+     * Init.
+     */
+    private void init() {
+        mBitmapPaint.setAntiAlias(true);
+        super.setScaleType(ScaleType.CENTER_CROP);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mCircleX = w / 2;
+        mCircleY = h / 2;
+        mRadius = Math.min(getWidth(), getHeight()) / 2;
+        setupBitmapShader();
+
+        // Move view to the right, top corner of the window.
+        mWindowParamater.x = mWindowManager.getDefaultDisplay().getWidth() / 2 - getWidth();
+        mWindowParamater.y = -1 * mWindowManager.getDefaultDisplay().getWidth() / 2;
+        mWindowManager.updateViewLayout(this, mWindowParamater);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.drawCircle(mCircleX, mCircleY, mRadius, mBitmapPaint);
     }
 }

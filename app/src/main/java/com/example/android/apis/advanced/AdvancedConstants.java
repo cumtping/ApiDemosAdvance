@@ -11,12 +11,7 @@ import android.os.Environment;
  */
 public interface AdvancedConstants {
     /**
-     * Short class name for api demos.
+     * Float view margin.
      */
-    String SHORT_CLASS_NAME_API_DEMOS = ".ApiDemos";
-    /**
-     * Request code for manage overlay permission.
-     */
-    int MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1;
-
+    float FLOAT_VIEW_MARGIN = 0.02f;
 }
