@@ -17,7 +17,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.AppCompatImageView;
 import android.widget.Toast;
 
@@ -31,8 +30,8 @@ import com.example.android.apis.R;
  * Features :
  * (1) Show as an application overlay view;
  * (2) Use BitmapShader to create circle image;
- * Notice: I want to extend the {@link CardView} for circle image. But the image is white and I
- * don't know why. So I just use BitmapShader for this feature.
+ * Notice: I want to extend the CardView for circle image. But the
+ * image is white and I don't know why. So I just use BitmapShader for this feature.
  * (3) Move with finger touch;
  * </p>
  *
@@ -229,7 +228,7 @@ public class AdvancedFloatView extends AppCompatImageView {
 
     @Override
     public boolean performClick() {
-        // TODO: Go to code activity.
+        getContext().startActivity(new Intent(getContext(), AdvancedActivity.class));
         return super.performClick();
     }
 
@@ -237,8 +236,7 @@ public class AdvancedFloatView extends AppCompatImageView {
         if (currentActivity != null && context != null) {
             boolean isApiDemosPage = currentActivity.startsWith(context.getPackageName());
             boolean isApiDemosListPage = false;//currentActivity.equals(ApiDemos.class.getName());
-            // TODO: Check whether is advanced page.
-            boolean isAdvancedPage = false;
+            boolean isAdvancedPage = currentActivity.equals(AdvancedActivity.class.getName());
 
             if (isApiDemosPage && !isApiDemosListPage && !isAdvancedPage) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

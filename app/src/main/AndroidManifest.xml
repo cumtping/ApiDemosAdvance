@@ -3345,6 +3345,8 @@
                 <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".advanced.AdvancedActivity" android:label="@string/advanced_page_title"/>
     </application>
 
     <instrumentation android:name=".app.LocalSampleInstrumentation"
