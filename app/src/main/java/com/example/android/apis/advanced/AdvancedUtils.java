@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018. Parrot Faurecia Automotive S.A.S. All rights reserved.
- */
-
 package com.example.android.apis.advanced;
 
 import android.content.Context;
@@ -147,7 +143,6 @@ public class AdvancedUtils {
             }
             if (ze.isDirectory()) {
                 String dirstr = folderPath + ze.getName();
-                Log.i(TAG, "dirstr=" + dirstr);
                 dirstr.trim();
                 File f = new File(dirstr);
                 f.mkdir();

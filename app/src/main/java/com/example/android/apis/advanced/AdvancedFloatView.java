@@ -106,6 +106,10 @@ public class AdvancedFloatView extends AppCompatImageView {
      * Shader matrix.
      */
     private final Matrix mShaderMatrix = new Matrix();
+    /**
+     * Current activity name.
+     */
+    private String mCurActivityName;
 
     /**
      * Constructor.
@@ -124,11 +128,12 @@ public class AdvancedFloatView extends AppCompatImageView {
      *
      * @return AdvancedFloatView instance.
      */
-    public static AdvancedFloatView showView(Context context) {
+    private static AdvancedFloatView showView(Context context, String curActivityName) {
         if (sInstance != null) {
             AdvancedFloatView.removeView(context);
         }
         AdvancedFloatView advancedFloatView = new AdvancedFloatView(context);
+        advancedFloatView.mCurActivityName = curActivityName;
         advancedFloatView.setImageResource(R.drawable.ic_code);
         WindowManager wm = (WindowManager) context.getApplicationContext().getSystemService
                 (Context.WINDOW_SERVICE);
@@ -228,7 +233,9 @@ public class AdvancedFloatView extends AppCompatImageView {
 
     @Override
     public boolean performClick() {
-        getContext().startActivity(new Intent(getContext(), AdvancedActivity.class));
+        Intent intent = new Intent(getContext(), AdvancedActivity.class);
+        intent.putExtra(AdvancedActivity.EXTRA_CUR_ACTIVITY_NAME, mCurActivityName);
+        getContext().startActivity(intent);
         return super.performClick();
     }
 
@@ -247,10 +254,10 @@ public class AdvancedFloatView extends AppCompatImageView {
                         Toast.makeText(context, R.string.message_overlay_permission_required,
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        AdvancedFloatView.showView(context);
+                        AdvancedFloatView.showView(context, currentActivity);
                     }
                 } else {
-                    AdvancedFloatView.showView(context);
+                    AdvancedFloatView.showView(context, currentActivity);
                 }
             }
         }

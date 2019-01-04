@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018. Parrot Faurecia Automotive S.A.S. All rights reserved.
- */
-
 package com.example.android.apis;
 
 import android.app.Activity;
