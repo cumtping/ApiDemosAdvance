@@ -99,7 +99,7 @@ public class AdvancedSearchUtils {
             String temp;
             temp = br.readLine();
             while (temp != null) {
-                sb.append(temp + " ");
+                sb.append(temp + "\n");
                 temp = br.readLine();
             }
         } catch (IOException e) {

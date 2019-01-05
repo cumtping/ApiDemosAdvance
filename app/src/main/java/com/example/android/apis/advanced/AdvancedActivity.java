@@ -30,6 +30,7 @@ public class AdvancedActivity extends Activity {
     private static final int REQ_CODE_WRITE_STORAGE_PERMISSION = 0;
     /** Current activity name. */
     private String mCurActivityName;
+    /** Code text view. */
     private TextView mCodeView;
 
     @Override
