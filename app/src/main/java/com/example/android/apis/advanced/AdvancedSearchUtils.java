@@ -6,7 +6,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for code searching.
@@ -108,5 +110,12 @@ public class AdvancedSearchUtils {
             Log.e(TAG, "getFileContent, Exception.", e);
         }
         return sb.toString();
+    }
+
+    public static Map<Integer, String> getMethodInfo(String codeContent) {
+        Map<Integer, String> methodMap = new HashMap<>();
+        String[] lines = codeContent.split("\n");
+
+        return methodMap;
     }
 }

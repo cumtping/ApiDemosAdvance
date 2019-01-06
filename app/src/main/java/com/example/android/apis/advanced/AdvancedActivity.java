@@ -46,6 +46,10 @@ public class AdvancedActivity extends Activity {
      */
     private String mCurActivityName;
     /**
+     * Current activiyt simple name.
+     */
+    private String mCurActivitySimpleName;
+    /**
      * Code view.
      */
     private CodeView mCodeView;
@@ -59,8 +63,25 @@ public class AdvancedActivity extends Activity {
         // mCodeView.setTheme(CodeViewTheme.ANDROIDSTUDIO).fillColor();
 
         mCurActivityName = getIntent().getStringExtra(EXTRA_CUR_ACTIVITY_NAME);
-        Log.i(TAG, "mCurActivityName=" + mCurActivityName);
+        getSimpleName();
+        if (mCurActivitySimpleName != null) {
+            getActionBar().setTitle(mCurActivitySimpleName);
+        }
         requestWriteStoragePermission();
+    }
+
+    /**
+     * Get activity simple name.
+     */
+    private void getSimpleName() {
+        // Notice: Should not use split(".");
+        String[] splits = mCurActivityName.split("\\.");
+        if (null == splits || splits.length <= 0) {
+            Log.e(TAG, "Load code. Wrong splits, return.");
+            return;
+        }
+
+        mCurActivitySimpleName = splits[splits.length - 1] + ".java";
     }
 
     /**
@@ -143,17 +164,9 @@ public class AdvancedActivity extends Activity {
             return;
         }
 
-        // Notice: Should not use split(".");
-        String[] splits = mCurActivityName.split("\\.");
-        if (null == splits || splits.length <= 0) {
-            Log.e(TAG, "Load code. Wrong splits, return.");
-            return;
-        }
-
-        String fileName = splits[splits.length - 1] + ".java";
         List<File> fileList = new ArrayList<>();
-        AdvancedSearchUtils.findFiles(AdvancedConstants.CODE_SDCARD_PATH, fileName, fileList);
-        Log.i(TAG, "Load code. fileName: " + fileName + ", result: " + fileList);
+        AdvancedSearchUtils.findFiles(AdvancedConstants.CODE_SDCARD_PATH, mCurActivitySimpleName, fileList);
+        Log.i(TAG, "Load code. fileName: " + mCurActivitySimpleName + ", result: " + fileList);
 
         if (fileList.size() < 1) {
             Log.i(TAG, "Load code. No result.");
