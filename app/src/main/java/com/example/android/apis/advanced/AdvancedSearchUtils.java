@@ -98,8 +98,10 @@ public class AdvancedSearchUtils {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String temp;
             temp = br.readLine();
+            int lineNumber = 1;
             while (temp != null) {
-                sb.append(temp + "\n");
+                // Append line number and return line.
+                sb.append(lineNumber++).append(" ").append(temp).append("\n");
                 temp = br.readLine();
             }
         } catch (IOException e) {
